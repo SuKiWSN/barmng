@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <style>
+        @import "../static/home.css";
+        .b1:hover{
+            background: rgb(166 122 81);
+            box-shadow: goldenrod;
+        }
+        .b1{transition:0.3s;background: goldenrod; float:left; width: 50px; height: 30px}
+    </style>
+</head>
+<body>
+    <div id="top">
+        <ul class="top-ul">
+            <li id="welcome">
+                欢迎{{ name }}来到网吧管理系统
+            </li>
+            <li>
+                <a href="/manage/">首页</a>
+            </li>
+            <li>
+                <form action="/manage/" method="post">
+                    <input type="text" name="usr" value="{{ address }}" style="display: none">
+                    <input type="password" name="pwd" value="{{ password }}" style="display: none">
+                    <input type="submit" name="submit" class="gotouser" value="后台管理" style="width: 100%; height: 100%; border: none; background: none; font-size: 100%; color: white; cursor: pointer">
+                </form>
+            </li>
+            <li>
+                <form action="/user/" style="color: bisque" method="post">
+                    <input type="text" name="usr" value="{{ address }}" style="display: none">
+                    <input type="password" name="pwd" value="{{ password }}" style="display: none">
+                    <input type="submit" name="submit" class="gotouser" value="用户中心" style="width: 100%; height: 100%; border: none; background: none; font-size: 100%; color: white; cursor:pointer">
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <div class="left2">
+            <div>
+                <div>
+                    <a class="left21" href="javascript: void(0)" onclick="getusers()">用户列表</a>
+                </div>
+                <div>
+                    <a class="left22" href="javascript:void(0)" onclick="adduser_view()">添加用户</a>
+                </div>
+                <div>
+                    <a class="left23" href="javascript:void(0)" onclick="getrechargerecord(0)">充值记录</a>
+                </div>
+                <div>
+                    <a class="left24" href="javascript: void(0)" onclick="getconsumerecord(0)">消费记录</a>
+                </div>
+            </div>
+    </div>
+
+    <div class="managediv">
+        <div class="right4">
+            <div>
+                <div class="table" style="margin-top: 100px; height: 500px; overflow-y: scroll; display: none">
+                    <table class="table1" style="width: 90%; border: 10px;" cellspacing="0" cellpadding="0">
+                        <tr style="width: 100%; height: 30px; border: 1px solid red; background-color:#F2F2F2;">
+                            <td>账号</td>
+                            <td>昵称</td>
+                            <td>密码</td>
+                            <td>余额</td>
+                            <td>等级</td>
+                            <td>性别</td>
+                            <td>权限</td>
+                            <td>操作</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="right42" style="width: 300px">
+                <form action="javascript:void(0)">
+                    <div style="float:left;"><input class="input-group search" style="width: 200px; height: 30px;" type="text" placeholder="输入用户信息查找"></div>
+                    <div class="b1"><button style="font-size: 100%;width: 100%; height: 100%; border:none; border-radius: 2px;background: none;" id="b1">搜索</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="right5">
+            <div style="width: 240px; height: 30px; margin-top: 100px; margin-left: 40px;">
+                    <input placeholder="输入账号" type="text" name="usr" class="input-group in1" style=" height:30px; margin-top: 20px;">
+                    <input placeholder="输入密码" type="text" name="pwd" class="input-group in2" style="height:30px; margin-top: 20px;">
+                    <input placeholder="输入余额" type="text" name="assets" class="input-group in3" style="height:30px; margin-top: 20px;">
+                    <select class="in4" style="margin-top: 20px; height:30px;">
+                        <option value="0">选择性别</option>
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </select>
+                    <div class="add_usr" style="margin-top: 20px; margin-left: auto">
+                        <button class="adduser" style=" width: 100%; height:100%; font-size: 100%;">提交</button>
+                    </div>
+            </div>
+        </div>
+        <div class="right6 record-model">
+            <div>
+                <div class="table" style="margin-top: 100px; height: 500px; overflow-y: scroll; display: none">
+                    <table class="table1" style="width: 90%; border: 1px;" cellspacing="0" cellpadding="0">
+                        <tr style="width: 100%; height: 30px; border: 1px; background-color:#F2F2F2;">
+                            <td id="td1">账号</td>
+                            <td id="td2">昵称</td>
+                            <td id="td3">充值金额</td>
+                            <td id="td4">充值时间</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="width: 300px; float:left; margin-top: 20px;">
+                <form action="javascript:void(0)">
+                    <div class="b1" style="margin-left: 20px;" >
+                        <button style="font-size: 100%;width: 100%; height: 100%; border:none; border-radius: 2px;background: none;" id="b2">今日</button>
+                        <button style="font-size: 100%;width: 100%; height: 100%; border:none; border-radius: 2px;background: none; display: none" id="b5">今日</button>
+                    </div>
+                    <div class="b1" style="margin-left: 20px;">
+                        <button style=" font-size: 100%;width: 100%; height: 100%; border:none; border-radius: 2px;background: none;" id="b3">本周</button>
+                        <button style="font-size: 100%;width: 100%; height: 100%; border:none; border-radius: 2px;background: none; display: none" id="b6">本周</button>
+                    </div>
+                    <div class="b1" style="margin-left: 20px;">
+                        <button style=" font-size: 100%;width: 100%; height: 100%; border:none; border-radius: 2px;background: none;" id="b4">本月</button>
+                        <button style="font-size: 100%;width: 100%; height: 100%; border:none; border-radius: 2px;background: none; display: none" id="b7">本月</button>
+                    </div>
+                </form>
+            </div>
+            <div style="width: 60px; height: 20px;margin-right: 20px; margin-top: 20px; float: left; text-align: center"> 合计：</div><div style="width: 40px; height: 20px; text-align: center; margin-right: 20px; margin-top: 20px; float: left" class="showsum"></div>
+            <div style="margin-right: 20px; margin-top: 20px; float: left"> 元</div>
+        </div>
+
+    </div>
+    <div class="message">
+        <div class="ok"></div>
+        <div class="not-ok"></div>
+        <div class="message-pre"></div>
+        <div class="message-box"></div>
+    </div>
+    <div class="givememoney" style="display: none">
+        <h2 style="text-align: center">充值</h2>
+        <div>
+            <div class="g1" style="text-align: center; margin-top: 50px;">
+                账号：
+            </div>
+            <div class="g2" style="text-align: center; margin-top: 20px;">
+                昵称：
+            </div>
+            <div class="g3" style="text-align: center; margin-top: 20px;">
+                余额：
+            </div>
+        </div>
+        <div>
+            <input class="input-group howmoney" style="width: 200px; height: 30px;margin-top: 20px;margin-left: 100px;" placeholder="
+            充值金额">
+            <div class="base2" style="float: left;margin-left:80px; "><button style=" border: none; font-size: 100%;">充值</button></div>
+<div class="base3" style="float: left; margin-left: 40px;"><button style=" border: none; font-size: 100%;">取消</button></div>
+        </div>
+
+    </div>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script>
+    $("#b5").click(function (){getconsumerecord(1);})
+    $("#b6").click(function (){getconsumerecord(2);})
+    $("#b7").click(function (){getconsumerecord(3);})
+    $(".base3").click(function(){
+        for(j=1;j<=3;j++){
+        x = document.getElementsByClassName('g'+ j)[0].childNodes
+        for(i=1;i<x.length;i++){
+            document.getElementsByClassName('g' + j)[0].removeChild(x[i]);
+        }
+        a = document.getElementsByClassName('givememoney')[0];
+        a.style.display = 'none';
+    }})
+    function changerole(obj, address){
+        var usr = localStorage.getItem('usr')
+        var pwd = localStorage.getItem('pwd')
+        var af_role = obj.options[obj.selectedIndex].value
+        $.ajax({
+            url: '/changepower/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'usr': usr, 'pwd': pwd, 'address': address, 'af_role': af_role},
+            success: function (data) {
+                if(data.code===200){
+                    $(".message-pre").text('请求成功');
+                    $(".message-box").text('用户权限修改成功');
+                    $(".ok").show();
+                    $(".not-ok").css('display', 'none');
+                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                }
+                else if(data.code===10024){
+                    if(obj.options.length == 2){
+                        obj.options[1-obj.selectedIndex].selected = true;
+                    }
+                    else{
+                        obj.options[2].selected = true;
+                    }
+                    $(".message-pre").text('请求失败');
+                    $(".message-box").text('用户权限不足');
+                    $(".not-ok").show();
+                    $(".ok").css('display', 'none');
+                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                }
+                else if(data.code===10023){
+                    obj.options[2].selected = true;
+                    $(".message-pre").text('请求失败');
+                    $(".message-box").text('老板权限无法修改');
+                    $(".not-ok").show();
+                    $(".ok").css('display', 'none');
+                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                }
+            }
+        })
+    }
+    function getconsumerecord(type){
+        $(".right4").css('display', 'none');
+        $(".right5").css('display', 'none');
+        $(".right6").show();
+        var l = document.getElementsByClassName('left2')[0].childNodes[1];
+            for(i=1;i<l.childNodes.length/2;i++){
+
+                if(2*i-1==7){
+                    l.childNodes[2*i-1].style.background = 'rgb(16,134,117)';
+                }
+                else{
+                    l.childNodes[2*i-1].style.background = 'rgb(25,22,32)';
+                }
+            }
+// <!--        $(".left21").css('color', 'black');-->
+// <!--        $(".left22").css('color', 'black');-->
+// <!--        $(".left23").css('color', 'black');-->
+// <!--        $(".left24").css('color', 'bisque');-->
+        $("#b5").show();
+        $("#b6").show();
+        $("#b7").show();
+        $("#b2").css('display', 'none')
+        $("#b3").css('display', 'none')
+        $("#b4").css('display', 'none')
+
+        $("#td3").text('消费金额');
+        $("#td4").text('消费时间');
+        var ta = document.getElementsByClassName('table1')[1].childNodes;
+        var t = document.getElementsByClassName('table1')[1]
+        for(i=ta.length-1;i>1;i--){
+            t.removeChild(ta[i]);
+        }
+        var usr = localStorage.getItem('usr')
+        var pwd = localStorage.getItem('pwd')
+        $.ajax({
+            url: '/consumerecord/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'usr': usr, 'pwd': pwd, 'type': type},
+            success: function (data){
+                if(data.message === 'success'){
+                        var list = data.content;
+                        for(i=0;i<list.length;i++){
+                            let tr = document.createElement('tr')
+                            for(j=0;j<list[i].length;j++){
+                                let td = document.createElement('td')
+                                td.textContent = list[i][j];
+                                tr.appendChild(td)
+                            }
+                            $(".table1")[1].appendChild(tr);
+                        }
+                    }
+                    $(".showsum").text(data.sum);
+            }
+        })
+
+    }
+    $(".base2").click(function (){
+        var usr = document.getElementsByClassName('g1')[0].childNodes[1].textContent
+        var money = $(".howmoney").val()
+        var name = document.getElementsByClassName('g2')[0].childNodes[1].textContent
+        $.ajax({
+            url:'/inmoney/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'usr': usr, 'money': money, 'name': name},
+            success: function (data){
+                if(data.message==='success') {
+                    tr = document.getElementsByClassName('table1')[0].childNodes
+                    for(i=2;i<tr.length;i++){
+                        if(tr[i].childNodes[0].textContent==usr){
+                            tr[i].childNodes[3].innerText = parseInt(money) + parseInt(document.getElementsByClassName('g3')[0].childNodes[1].textContent)
+                            break;
+                        }
+                    }
+                    document.getElementsByClassName('howmoney')[0].value = ''
+
+
+                    $(".message-pre").text('请求成功');
+                    $(".message-box").text('充值成功');
+                    $(".ok").show();
+                    $(".not-ok").css('display', 'none');
+                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                    document.getElementsByClassName('g1')[0].removeChild(document.getElementsByClassName('g1')[0].childNodes[1]);
+                    document.getElementsByClassName('g2')[0].removeChild(document.getElementsByClassName('g2')[0].childNodes[1]);
+                    document.getElementsByClassName('g3')[0].removeChild(document.getElementsByClassName('g3')[0].childNodes[1]);
+                    $(".givememoney").css('display', 'none');
+                }
+                else{
+                    $(".message-pre").text('请求失败');
+                    $(".message-box").text('金额输入错误');
+                    $(".not-ok").show();
+                    $(".ok").css('display', 'none');
+                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                }
+            }
+
+        })
+    })
+    var content;
+    $(".adduser").click(function (){
+        var usr = $(".in1").val();
+        var pwd = $(".in2").val();
+        var money = $(".in3").val();
+        var gend = $(".in4").val();
+        $.ajax({
+            url: '/addusr/',
+            type: 'POST',
+            dataType: 'json',
+            data: {'usr': usr, 'pwd': pwd, 'money': money, 'gend': gend},
+            success: function (data){
+                if(data.message==='succeed'){
+                $(".message-pre").text('请求成功');
+                $(".message-box").text('添加用户成功');
+                $(".ok").show();
+                $(".not-ok").css('display', 'none');
+                $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                }
+                else{
+                    $(".message-pre").text('请求失败');
+                $(".message-box").text('账号已存在');
+                $(".not-ok").show();
+                $(".ok").css('display', 'none');
+                $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                }
+            }
+        })
+    })
+    $("#b2").click(function (){getrechargerecord(1)})
+    $("#b3").click(function (){getrechargerecord(2)})
+    $("#b4").click(function (){getrechargerecord(3)})
+    function getrechargerecord(type){
+        $(".right6").show();
+        $(".right4").css('display', 'none');
+        $(".right5").css('display', 'none');
+// <!--        $(".left21").css('color', 'black');-->
+// <!--        $(".left22").css('color', 'black');-->
+// <!--        $(".left24").css('color', 'black');-->
+// <!--        $(".left23").css('color', 'bisque');-->
+        var l = document.getElementsByClassName('left2')[0].childNodes[1];
+            for(i=1;i<l.childNodes.length/2;i++){
+
+                if(2*i-1==5){
+                l.childNodes[2*i-1].style.background = 'rgb(16,134,117)';
+                }
+                else{
+                    l.childNodes[2*i-1].style.background = 'rgb(25,22,32)';
+                }
+            }
+
+        $("#b2").show();
+        $("#b3").show();
+        $("#b4").show();
+        $("#b5").css('display', 'none');
+        $("#b6").css('display', 'none');
+        $("#b7").css('display', 'none');
+        $("#td3").text('充值金额');
+        $("#td4").text('充值时间');
+
+        var usr = localStorage.getItem('usr')
+        var pwd = localStorage.getItem('pwd')
+        $.ajax(
+            {
+                url: '/getrechargerecord/',
+                type: 'POST',
+                dataType: 'json',
+                data: {'usr':usr, 'pwd': pwd, 'type':type},
+                success: function (data){
+                    var ta = document.getElementsByClassName('table1')[1].childNodes;
+                    var t = document.getElementsByClassName('table1')[1]
+                    for(i=ta.length-1;i>1;i--){
+                        t.removeChild(ta[i]);
+                    }
+                    if(data.message === 'success'){
+                        var list = data.content;
+                        for(i=0;i<list.length;i++){
+                            let tr = document.createElement('tr')
+                            for(j=0;j<list[i].length;j++){
+                                let td = document.createElement('td')
+                                td.textContent = list[i][j];
+                                tr.appendChild(td)
+                            }
+                            $(".table1")[1].appendChild(tr);
+                        }
+                    }
+                    $(".showsum").text(data.sum);
+                }
+            }
+        )
+    }
+    function adduser_view(){
+// <!--        $(".left22").css('color', 'bisque');-->
+// <!--        $(".left21").css('color', 'black');-->
+// <!--        $(".left23").css('color', 'black');-->
+// <!--        $(".left24").css('color', 'black');-->
+        var l = document.getElementsByClassName('left2')[0].childNodes[1];
+            for(i=1;i<l.childNodes.length/2;i++){
+
+                if(2*i-1==3){
+                     l.childNodes[2*i-1].style.background = 'rgb(16,134,117)';
+                }
+                else{
+                    l.childNodes[2*i-1].style.background = 'rgb(25,22,32)';
+                }
+            }
+        $(".right4").css('display', 'none');
+        $(".right5").show();
+        $(".right6").css('display', 'none');
+    }
+    $(document).ready(
+        getusers(),
+        highlight_top(),
+    );
+
+    function highlight_top(){
+        a = document.getElementsByClassName('top-ul')[0].childNodes[5]
+        a.style.background = 'rgb(16,134,117)'
+    }
+
+    function getusers(){
+            var usr = localStorage.getItem('usr')
+            var pwd = localStorage.getItem('pwd')
+        var l = document.getElementsByClassName('left2')[0].childNodes[1];
+            for(i=1;i<l.childNodes.length/2;i++){
+
+                if(2*i-1==1){
+                  l.childNodes[2*i-1].style.background = 'rgb(16,134,117)';
+                }
+                else{
+                    l.childNodes[2*i-1].style.background = 'rgb(25,22,32)';
+                }
+            }
+            $.ajax(
+                {
+                    url: '/getusers/',
+                    async: false,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'usr':usr, 'pwd':pwd},
+                    success: function (data){
+                        if(data.message==='notpass'){
+                            $(".message-pre").text('请求失败');
+                            $(".message-box").text('请刷新页面');
+                            $(".not-ok").show();
+                            $(".ok").css('display', 'none');
+                            $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                        }
+                        else{
+                            var ta = document.getElementsByClassName('table1')[0].childNodes;
+                            var t = document.getElementsByClassName('table1')[0]
+                            for(i=ta.length-1;i>1;i--){
+                                t.removeChild(ta[i]);
+                            }
+
+                            $(".right4").show();
+                            $(".right5").css('display', 'none');
+                            $(".right6").css('display', 'none');
+                            var list = data['content'];
+                            content = list;
+                            for(i=0;i<list.length;i++){
+                                let tr = document.createElement('tr');
+                                for(j=0;j<list[i].length;j++){
+                                    let td = document.createElement('td');
+                                    td.innerText = list[i][j];
+                                    if(j===list[i].length-3){
+                                        if(list[i][j]===0){
+                                            td.innerText = '青铜会员';
+                                        }
+                                        else if(list[i][j] === 1){
+                                            td.innerText = '白银会员';
+                                        }
+                                        else if(list[i][j] === 2){
+                                            td.innerText = '黄金会员';
+                                        }
+                                        else if(list[i][j] === 3){
+                                            td.innerText = '铂金会员';
+                                        }
+                                        else{
+                                            td.innerText = '钻石会员';
+                                        }
+                                    }
+                                    if(j===list[i].length-2){
+                                        if(list[i][j]==='1'){
+                                            td.innerText = '男';
+                                        }
+                                        else{
+                                            td.innerText = '女';
+                                        }
+                                    }
+                                    if(j===list[i].length-1){
+                                        // if(list[i][j]===0){
+                                        //     td.innerText = '普通用户';
+                                        // }
+                                        // else if(list[i][j]===1){
+                                        //     td.innerText = '管理员';
+                                        // }
+                                        td.innerText = '';
+                                        let select = document.createElement('select')
+                                        select.id = 'select' + i;
+                                        select.style.width = '60%';
+                                        select.style.height = '80%';
+                                        if(i % 2 == 0){
+                                            select.style.background = "rgb(231,229,229)";
+                                        }
+                                        select.style.color = 'black';
+                                        select.style.border = 'none';
+                                        select.style.borderRadius = '3px';
+                                        select.options.add(new Option('普通用户', 0));
+                                        select.options.add(new Option('管理员', 1));
+                                        if(list[i][j] === 2){
+                                            select.options.add(new Option('老板', 2));
+                                        }
+                                        select.options[list[i][j]].selected = true;
+                                        td.appendChild(select);
+                                        
+                                    }
+                                    tr.appendChild(td);
+                                }
+                                let td = document.createElement('td')
+                                let btn4 = document.createElement('button')
+                                btn4.className = 'deletes';
+                                btn4.id = 'delete'+i;
+                                btn4.style.width = '45%';
+                                btn4.style.height = '80%';
+                                btn4.style.float = 'left';
+                                btn4.style.border = 'none';
+                                btn4.style.borderRadius = '3px';
+                                btn4.style.boxShadow = '2px 2px gray';
+                                btn4.textContent = '充值';
+                                btn4.style.textAlign = 'center';
+                                btn4.style.fontSize = '100%';
+                                btn4.style.background = 'orange';
+                                btn4.style.marginLeft = '2%';
+                                td.appendChild(btn4);
+                                btn4.onclick = function (){
+                                    $(".givememoney").show()
+                                    var me = this.parentNode.parentNode.childNodes;
+                                    // for(i=0;i<me.length;i++){
+                                    //     console.log(me[i].textContent)
+                                    // }
+                
+                                    var div = document.getElementsByClassName('g1')[0];
+                                        let d = document.createElement('div')
+                                        d.textContent = me[0].textContent;
+                                        div.appendChild(d);
+                                    var div2 = document.getElementsByClassName('g2')[0];
+                                        let d2 = document.createElement('div')
+                                        d2.textContent = me[1].textContent;
+                                        div2.appendChild(d2);
+                                    var div3 = document.getElementsByClassName('g3')[0];
+                                        let d3 = document.createElement('div')
+                                        d3.textContent = me[3].textContent;
+                                        div3.appendChild(d3);
+                                    x = document.getElementsByClassName('givememoney')[0];
+                                    
+                                }
+
+                                let btn = document.createElement('button')
+                                btn.className = 'deletes';
+                                btn.id = 'delete'+i;
+                                btn.style.width = '45%';
+                                btn.style.height = '80%';
+                                btn.style.float = 'left';
+                                btn.style.border = 'none';
+                                btn.style.borderRadius = '3px';
+                                btn.style.boxShadow = '2px 2px gray';
+                                btn.textContent = '删除';
+                                btn.style.textAlign = 'center';
+                                btn.style.fontSize = '100%';
+                                btn.style.background = 'goldenrod';
+                                btn.style.marginLeft = '2%';
+                                btn.onclick = function (){
+                                    this.style.display = 'none';
+                                    btn4.style.display = 'none';
+                                    let btn2 = document.createElement('button')
+                                    btn2.className = 'deletes';
+                                    btn2.id = 'delete'+i;
+                                    btn2.style.width = '45%';
+                                    btn2.style.height = '80%';
+                                    btn2.style.float = 'left';
+                                    btn2.style.border = 'none';
+                                    btn2.style.borderRadius = '3px';
+                                    btn2.style.boxShadow = '2px 2px gray';
+                                    btn2.textContent = '确认';
+                                    btn2.style.textAlign = 'center';
+                                    btn2.style.fontSize = '100%';
+                                    btn2.style.background = 'red';
+                                    btn2.style.marginLeft = '2%';
+                                    td.appendChild(btn2);
+                                    let btn3 = document.createElement('button')
+                                    btn3.className = 'deletes';
+                                    btn3.id = 'delete'+i;
+                                    btn3.style.width = '45%';
+                                    btn3.style.height = '80%';
+                                    btn3.style.float = 'left';
+                                    btn3.style.border = 'none';
+                                    btn3.style.borderRadius = '3px';
+                                    btn3.style.boxShadow = '2px 2px gray';
+                                    btn3.textContent = '取消';
+                                    btn3.style.textAlign = 'center';
+                                    btn3.style.fontSize = '100%';
+                                    btn3.style.background = 'green';
+                                    btn3.style.marginLeft = '2%';
+                                    td.appendChild(btn3);
+                                    btn3.onclick = function (){
+                                        btn2.style.display = 'none'
+                                        btn3.style.display = 'none';
+                                        btn4.style.display = 'block';
+                                        btn.style.display = 'block';
+                                    }
+                                    btn2.onclick = function (){
+                                    var id = this.id;
+                                    var d = this.parentNode.parentNode.childNodes;
+                                    var address = d[0].textContent;
+                                    var f = 0;
+                                    var usr = localStorage.getItem('usr');
+                                    var pwd = localStorage.getItem('pwd');
+                                    $.ajax(
+                                        {
+                                            url: '/deleteusr/',
+                                            dataType: 'json',
+                                            type: 'POST',
+                                            data: {'usr': address, 'address': usr, 'pwd': pwd},
+                                            async: false,
+                                            success: function (data){
+                                                if(data.message==='success'){
+                                                    $(".message-pre").text('请求成功');
+                                                    $(".message-box").text('删除用户成功');
+                                                    $(".ok").show();
+                                                    $(".not-ok").css('display', 'none');
+                                                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                                                    f = 1;
+                                                }
+                                                else if(data.code === 10022){
+                                                    $(".message-pre").text('请求失败');
+                                                    $(".message-box").text('不能删除自己');
+                                                    $(".not-ok").show();
+                                                    $(".ok").css('display', 'none');
+                                                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                                                }
+                                                else if(data.code === 10023){
+                                                    $(".message-pre").text('请求失败');
+                                                    $(".message-box").text('用户权限不足');
+                                                    $(".not-ok").show();
+                                                    $(".ok").css('display', 'none');
+                                                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                                                }
+                                                else{
+                                                    $(".message-pre").text('请求失败');
+                                                    $(".message-box").text('删除用户失败');
+                                                    $(".not-ok").show();
+                                                    $(".ok").css('display', 'none');
+                                                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                                                }
+                                            }
+                                        }
+                                    )
+                                        var pp = this.parentNode.parentNode.parentNode;
+                                        if(f===1){
+                                            pp.removeChild(this.parentNode.parentNode);
+                                        }
+
+                                };
+                                };
+
+                                td.appendChild(btn)
+                                tr.appendChild(td)
+                                $(".table1")[0].appendChild(tr);
+                                var select = tr.childNodes[tr.childNodes.length-2].childNodes[0]
+                                select.addEventListener('change', changerole.bind(this,select, select.parentNode.parentNode.childNodes[0].textContent), false);
+                            }
+
+                        }
+                    }
+                }
+            )
+        $(".table").show();
+// <!--        $(".left21").css('color', 'bisque');-->
+// <!--        $(".left22").css('color', 'black');-->
+// <!--        $(".left23").css('color', 'black');-->
+// <!--        $(".left24").css('color', 'black');-->
+        }
+        $("#b1").click(function (){
+        var address = $(".search").val();
+        var usr = localStorage.getItem('usr')
+        var password = localStorage.getItem('pwd')
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: '/search_usr/',
+                    dataType: 'json',
+                    data:{'usr': address, 'address': usr, 'password': password},
+                    success(data){
+                        var ta = document.getElementsByClassName('table1')[0].childNodes;
+                            var t = document.getElementsByClassName('table1')[0]
+                            for(i=ta.length-1;i>1;i--){
+                                t.removeChild(ta[i]);
+                            }
+                            var list = data['content'];
+                            content = list;
+                            for(i=0;i<list.length;i++){
+                                let tr = document.createElement('tr');
+                                for(j=0;j<list[i].length;j++){
+                                    let td = document.createElement('td');
+                                    td.innerText = list[i][j];
+                                    if(j===list[i].length-3){
+                                        if(list[i][j]===0){
+                                            td.innerText = '青铜会员';
+                                        }
+                                        else if(list[i][j] === 1){
+                                            td.innerText = '白银会员';
+                                        }
+                                        else if(list[i][j] === 2){
+                                            td.innerText = '黄金会员';
+                                        }
+                                        else if(list[i][j] === 3){
+                                            td.innerText = '铂金会员';
+                                        }
+                                        else{
+                                            td.innerText = '钻石会员';
+                                        }
+                                    }
+                                    if(j===list[i].length-2){
+                                        if(list[i][j]==='1'){
+                                            td.innerText = '男';
+                                        }
+                                        else{
+                                            td.innerText = '女';
+                                        }
+                                    }
+                                    if(j===list[i].length-1){
+                                        // if(list[i][j]===0){
+                                        //     td.innerText = '普通用户';
+                                        // }
+                                        // else if(list[i][j]===1){
+                                        //     td.innerText = '管理员';
+                                        // }
+                                        td.innerText = '';
+                                        let select = document.createElement('select')
+                                        select.id = 'select' + i;
+                                        select.style.width = '60%';
+                                        select.style.height = '80%';
+                                        if(i % 2 == 0){
+                                            select.style.background = 'rgb(231,229,229)';
+                                        }
+                                        select.style.color = 'black';
+                                        select.style.border = 'none';
+                                        select.style.borderRadius = '3px';
+                                        select.options.add(new Option('普通用户', 0));
+                                        select.options.add(new Option('管理员', 1));
+                                        if(list[i][j] === 2){
+                                            select.options.add(new Option('老板', 2));
+                                        }
+                                        select.options[list[i][j]].selected = true;
+                                        td.appendChild(select);
+                                        
+                                    }
+                                    tr.appendChild(td);
+                                }
+                                let td = document.createElement('td')
+                                let btn4 = document.createElement('button')
+                                btn4.className = 'deletes';
+                                btn4.id = 'delete'+i;
+                                btn4.style.width = '45%';
+                                btn4.style.height = '80%';
+                                btn4.style.float = 'left';
+                                btn4.style.border = 'none';
+                                btn4.style.borderRadius = '3px';
+                                btn4.style.boxShadow = '2px 2px gray';
+                                btn4.textContent = '充值';
+                                btn4.style.textAlign = 'center';
+                                btn4.style.fontSize = '100%';
+                                btn4.style.background = 'orange';
+                                btn4.style.marginLeft = '2%';
+                                td.appendChild(btn4);
+                                btn4.onclick = function (){
+                                    $(".givememoney").show()
+                                    var me = this.parentNode.parentNode.childNodes;
+                                    // for(i=0;i<me.length;i++){
+                                    //     console.log(me[i].textContent)
+                                    // }
+                                    var div = document.getElementsByClassName('g1')[0];
+                                        let d = document.createElement('div')
+                                        d.textContent = me[0].textContent;
+                                        div.appendChild(d);
+                                    var div2 = document.getElementsByClassName('g2')[0];
+                                        let d2 = document.createElement('div')
+                                        d2.textContent = me[1].textContent;
+                                        div2.appendChild(d2);
+                                    var div3 = document.getElementsByClassName('g3')[0];
+                                        let d3 = document.createElement('div')
+                                        d3.textContent = me[3].textContent;
+                                        div3.appendChild(d3);
+                                }
+                                let btn = document.createElement('button')
+                                btn.className = 'deletes';
+                                btn.id = 'delete'+i;
+                                btn.style.width = '45%';
+                                btn.style.height = '80%';
+                                btn.style.float = 'left';
+                                btn.style.border = 'none';
+                                btn.style.borderRadius = '3px';
+                                btn.style.boxShadow = '2px 2px gray';
+                                btn.textContent = '删除';
+                                btn.style.textAlign = 'center';
+                                btn.style.fontSize = '100%';
+                                btn.style.background = 'goldenrod';
+                                btn.onclick = function (){
+                                    btn.style.display = 'none';
+                                    btn4.style.display = 'none';
+                                    let btn2 = document.createElement('button')
+                                    btn2.className = 'deletes';
+                                    btn2.id = 'delete'+i;
+                                    btn2.style.width = '45%';
+                                    btn2.style.height = '80%';
+                                    btn2.style.float = 'left';
+                                    btn2.style.border = 'none';
+                                    btn2.style.borderRadius = '3px';
+                                    btn2.style.boxShadow = '2px 2px gray';
+                                    btn2.textContent = '确认';
+                                    btn2.style.textAlign = 'center';
+                                    btn2.style.fontSize = '100%';
+                                    btn2.style.background = 'red';
+                                    btn2.style.marginLeft = '2%';
+                                    td.appendChild(btn2);
+                                    let btn3 = document.createElement('button')
+                                    btn3.className = 'deletes';
+                                    btn3.id = 'delete'+i;
+                                    btn3.style.width = '45%';
+                                    btn3.style.height = '80%';
+                                    btn3.style.float = 'left';
+                                    btn3.style.border = 'none';
+                                    btn3.style.borderRadius = '3px';
+                                    btn3.style.boxShadow = '2px 2px gray';
+                                    btn3.textContent = '取消';
+                                    btn3.style.textAlign = 'center';
+                                    btn3.style.fontSize = '100%';
+                                    btn3.style.background = 'green';
+                                    btn3.style.marginLeft = '2%';
+                                    td.appendChild(btn3);
+                                    btn3.onclick = function (){
+                                        btn2.style.display = 'none'
+                                        btn3.style.display = 'none';
+                                        btn.style.display = 'block';
+                                        btn4.style.display = 'block';
+                                    }
+                                    btn2.onclick = function (){
+                                    var id = this.id;
+                                    var d = this.parentNode.parentNode.childNodes;
+                                    var address = d[0].textContent;
+                                    var f = 0;
+                                    var usr = localStorage.getItem('usr');
+                                    var pwd = localStorage.getItem('pwd');
+                                    $.ajax(
+                                        {
+                                            url: '/deleteusr/',
+                                            dataType: 'json',
+                                            type: 'POST',
+                                            data: {'usr': address, 'address': usr, 'pwd': pwd},
+                                            async: false,
+                                            success: function (data){
+                                                if(data.message==='success'){
+                                                    $(".message-pre").text('请求成功');
+                                                    $(".message-box").text('删除用户成功');
+                                                    $(".ok").show();
+                                                    $(".not-ok").css('display', 'none');
+                                                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                                                    f = 1;
+                                                }
+                                                else if(data.code === 10022){
+                                                    $(".message-pre").text('请求失败');
+                                                    $(".message-box").text('不能删除自己');
+                                                    $(".not-ok").show();
+                                                    $(".ok").css('display', 'none');
+                                                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                                                }
+                                                else if(data.code === 10023){
+                                                    $(".message-pre").text('请求失败');
+                                                    $(".message-box").text('用户权限不足');
+                                                    $(".not-ok").show();
+                                                    $(".ok").css('display', 'none');
+                                                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                                                }
+                                                else{
+                                                    $(".message-pre").text('请求失败');
+                                                    $(".message-box").text('删除用户失败');
+                                                    $(".not-ok").show();
+                                                    $(".ok").css('display', 'none');
+                                                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                                                }
+                                            }
+                                        }
+                                    )
+                                        var pp = this.parentNode.parentNode.parentNode;
+                                        if(f===1){
+                                            pp.removeChild(this.parentNode.parentNode);
+                                        }
+
+                                };
+                                };
+                                td.appendChild(btn)
+                                tr.appendChild(td)
+                                $(".table1")[0].appendChild(tr);
+                                var select = tr.childNodes[tr.childNodes.length-2].childNodes[0]
+                                select.addEventListener('change', changerole.bind(this,select, select.parentNode.parentNode.childNodes[0].textContent), false);
+                            }
+                    }
+                }
+            )
+        }
+        )
+
+</script>
+</body>
+</html>

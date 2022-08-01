@@ -1,0 +1,272 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户中心</title>
+    <style >
+        @import "../static/home.css";
+    </style>
+</head>
+<body>
+    <div id="top">
+        <ul class="top-ul">
+            <li id="welcome">
+                欢迎{{name}}来到网吧管理系统
+             </li>
+            <li>
+                <a href="/manage/">首页</a>
+            </li>
+            <li>
+                <form action="/manage/" method="post">
+                    <input type="text" name="usr" value="{{ address }}" style="display: none">
+                    <input type="password" name="pwd" value="{{ password }}" style="display: none">
+                    <input type="submit" name="submit" class="gotouser" value="后台管理" style="width: 100%; height: 100%; border: none; background: none; font-size: 100%; color:white; cursor:pointer"">
+                </form>
+            </li>
+            <li>
+                <form action="/user/" style="color: white" method="post">
+                    <input type="text" name="usr" value="{{ address }}" style="display: none">
+                    <input type="password" name="pwd" value="{{ password }}" style="display: none">
+                    <input type="submit" name="submit" class="gotouser" value="用户中心" style="width: 100%; height: 100%; border: none; background: none; font-size: 100%; color: white; cursor:pointer">
+                </form>
+            </li>
+        </ul>
+    </div>
+    <div class="left">
+        <div>
+            <div>
+                <a id="showme" style="width: 100%;height: 100%" href="javascript:void(0)" onclick="showme()">个人信息</a>
+            </div>
+            <div>
+                <a id="showmima" style="width: 100%;height: 100%" href="javascript:void(0)" onclick="showmima()">修改密码</a>
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <div style="float:left; border: 1px black; border-radius: 5px;">
+        <div class="base1" id="address">
+            账号：{{ address }}
+        </div>
+        <div class="base1">
+            昵称：{{ name }}
+        </div>
+        <div class="base1">
+            性别：{% if gend == '1' %}
+            男
+            {% elif gend == '2' %}
+            女
+            {% endif %}
+        </div>
+        <div class="base1">
+            余额：{{ assets }}元
+        </div>
+        <div class="base1">
+            等级：{% if rank == 0 %}
+                青铜会员
+            {% elif rank == 1 %}
+                白银会员
+            {% elif rank == 2 %}
+                黄金会员
+            {% elif rank == 3 %}
+                铂金会员
+            {% elif rank == 4 %}
+                钻石会员
+            {% endif %}
+        </div>
+        </div>
+        </div>
+    <div class="right2">
+        <form method="post" action="/user/" onsubmit="return start()">
+        <input name="usr" value="{{ address }}" type="text" style="display: none">
+        <input name="pwd" value="{{ password }}" type="password" style="display: none">
+        <div style="height: 150px;width: 95%;">
+            <div style="margin-top: 100px;">
+                修改昵称
+            </div>
+        <div class="name" style="margin-top: 30px;">
+            <input class="input-group" value="{{ name }}" style="color: gray">
+        </div>
+            </div>
+        <div style="width: 95%; height: 150px;margin-top: 10px; line-height: 150px;">
+            <select id="group" value="{{ gend }}" style="margin: auto;">
+                <option value="{{ gend }}">修改性别</option>
+                <option id="group1" value="1">
+                    男
+                </option>
+                <option id="group2" value="2">
+                    女
+                </option>
+            </select>
+        </div>
+        <div class="base2">
+        <button class="submit">
+            修改
+        </button>
+        </div>
+        </form>
+    </div>
+    <div class="right3" style="text-align: center">
+        <div style="margin: auto; width: 600px; height: 200px; position: absolute; top: 0; bottom: 0; left: 0;right: 0">
+            <div class="mm">
+            输入密码：<input name="mima" id="1" class="mima" type="password">
+            </div>
+            <div class="mm">
+            确认密码：<input name="queren" id="2" class="mima" type="password">
+            </div>
+            <div class="bas">
+                <button style="height: 100%; width: 100%; font-size: 100%;">
+                    修改
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="message">
+        <div class="ok"></div>
+        <div class="not-ok"></div>
+        <div class="message-pre"></div>
+        <div class="message-box"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script>
+        function gotouser(){
+            $(".right").show()
+                $(".right2").show()
+                $(".left").show()
+            $(".left2").css('display', 'none');
+// <!--            $("#gotomanage").css('color', 'black');-->
+// <!--            $("#gotouser").css('color', 'bisque');-->
+        }
+        function gotomanage(){
+            usr = localStorage.getItem('usr')
+            pwd = localStorage.getItem('pwd')
+            var f = 0;
+            $.ajax(
+                {
+                    async: false,
+                    type: 'POST',
+                    dataType: 'json',
+                    url: '/role/',
+                    data:{'usr':usr, 'pwd':pwd},
+                    success: function (data){
+                        if(data.message === 1 || data.message === 2){
+                            f = 1;
+                        }
+                    }
+                }
+            )
+            if(f===1){
+                $(".right").css('display', 'none');
+                $(".right2").css('display', 'none');
+                $(".right3").css('display', 'none');
+                $(".left").css('display', 'none');
+// <!--                $("#gotomanage").css('color', 'bisque');-->
+// <!--            $("#gotouser").css('color', 'black');-->
+            $(".left2").show()
+            }
+            else{
+                $(".message-pre").text('请求失败');
+                $(".message-box").text('用户权限不足');
+                $(".not-ok").show();
+                $(".ok").css('display', 'none');
+                $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+            }
+        }
+        function showme(){
+            $(".right").show();
+            $(".right2").show();
+            $(".right3").css('display', 'none');
+// <!--            $("#showme").css('color', 'bisque');-->
+// <!--            $("#showmima").css('color', 'black');-->
+var l = document.getElementsByClassName('left')[0].childNodes[1]
+            a = l.childNodes[1]
+            b = l.childNodes[3]
+            a.style.background = 'rgb(16,134,117)';
+            b.style.background = 'rgb(25,22,32)';
+        }
+        function showmima(){
+            $(".right3").show();
+            $(".right").css('display', 'none');
+            $(".right2").css('display', 'none');
+// <!--            $("#showme").css('color', 'black');-->
+// <!--            $("#showmima").css('color', 'bisque');-->
+var l = document.getElementsByClassName('left')[0].childNodes[1]
+            a = l.childNodes[1]
+            b = l.childNodes[3]
+            a.style.background = 'rgb(25,22,32)';
+            b.style.background = 'rgb(16,134,117)';
+        }
+        function start(){
+            var b = document.getElementsByClassName('base1');
+            var address = b[0].textContent;
+            var name = $(".input-group").val();
+            if(name.length===0){
+                $(".message-pre").text('请求失败');
+                $(".message-box").text('昵称不能为空');
+                $(".not-ok").show();
+                $(".ok").css('display', 'none');
+                $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                return false;
+            }
+            var gend = $("#group").val();
+            $.ajax(
+                {
+                    url: '/modify/',
+                    async: false,
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {'name': name, 'gend': gend, 'address': address},
+                }
+            )
+        }
+
+        $(".bas").click(function (){
+            var pwd = $("#1").val();
+            var pwd2 = $("#2").val();
+            var b = document.getElementsByClassName('base1');
+            var address = b[0].textContent;
+            if(pwd !== pwd2){
+                $(".message-pre").text('请求失败');
+                        $(".message-box").text('两次密码不正确');
+                        $(".not-ok").show();
+                        $(".ok").css('display', 'none');
+                        $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+            }
+            else{
+                if(pwd.length < 8 ||pwd.length > 16){
+                    $(".message-pre").text('请求失败');
+                    $(".message-box").text('密码长度不合法');
+                    $(".not-ok").show();
+                    $(".ok").css('display', 'none');
+                    $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                    return false;
+                }
+                $.ajax({
+                    url: '/changepwd/',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {'pwd': pwd, 'address': address},
+                    success: function (data){
+                        $(".message-pre").text('请求成功');
+                        $(".message-box").text('密码修改成功');
+                        $(".ok").show();
+                        $(".not-ok").css('display', 'none');
+                        $(".message").stop().fadeIn(1).delay(2000).fadeOut(1);
+                    }
+                })
+            }
+        })
+        function highlight_top(){
+        a = document.getElementsByClassName('top-ul')[0].childNodes[7]
+        a.style.background = 'rgb(16,134,117)'
+    }
+        $(document).ready(
+            highlight_top(),
+            showme()
+        )
+    </script>
+
+</body>
+</html>
